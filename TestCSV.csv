@@ -1,6 +1,6 @@
 number,name,available
-1,Yehor,FALSE
-2,Igor,FALSE
-3,Sofia,FALSE
-4,Updated,FALSE
-5,Oksana,FALSE
+1,Yehor,TRUE
+2,Igor,TRUE
+3,Sofia,TRUE
+4,Updated,TRUE
+5,Oksana,TRUE

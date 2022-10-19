@@ -1,9 +1,4 @@
-package requests
-
-// Type for custom query request
-type RequestCustomQuery struct {
-	Query string `json:"query"`
-}
+package request
 
 // Type for get contacts request
 type RequestGetContacts struct {

@@ -1,4 +1,4 @@
-package statistic
+package taskstorage
 
 type Statistics struct {
 	ContactsCreated int
