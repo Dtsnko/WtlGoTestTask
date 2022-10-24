@@ -1,6 +1,8 @@
 package storage
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+)
 
 type Storage struct {
 	Db            *gorm.DB

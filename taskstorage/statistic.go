@@ -1,8 +1,8 @@
 package taskstorage
 
 type Statistics struct {
-	ContactsCreated int
-	ContactsUpdated int
-	ContactsDeleted int
-	Errors          []string
+	Created int
+	Updated int
+	Deleted int
+	Errors  []error
 }

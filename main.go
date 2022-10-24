@@ -7,17 +7,13 @@ import (
 
 	handler "github.com/Dtsnko/handler"
 	"github.com/Dtsnko/storage"
+	"github.com/Dtsnko/taskstorage"
 
 	"github.com/gorilla/mux"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-var hndlr *handler.Handler
-
-//Block routing
-
 func main() {
-	hndlr = ConfigureHandler()
 
 	handleRequests()
 }
@@ -31,17 +27,15 @@ func ConfigureStorage() (*storage.Storage, error) {
 	return storage, nil
 }
 
-func ConfigureHandler() *handler.Handler {
-	return handler.New()
+func ConfigureHandler() *handler.RequestHandler {
+	return handler.New(taskstorage.New())
 }
 
 func handleRequests() {
 	myRouter := mux.NewRouter().StrictSlash(true)
+	hndlr := ConfigureHandler()
+	hndlr.HandleFunctions(myRouter)
 	myRouter.HandleFunc("/", getFile).Methods("GET")
-	myRouter.HandleFunc("/upload", hndlr.RecordHand.UploadRecords).Methods("POST")
-	myRouter.HandleFunc("/get_contacts", hndlr.RecordHand.GetRecords).Methods("POST")
-	//myRouter.HandleFunc("/custom_query", taskstorage.GetCustomQueryResult).Methods("POST")
-	myRouter.HandleFunc("/get_task_result/{id}", hndlr.TaskHand.GetTaskResult).Methods("GET")
 	log.Fatal(http.ListenAndServe(":10000", myRouter))
 
 }

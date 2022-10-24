@@ -23,7 +23,7 @@ func (logger *DatabaseLogger) LogEvent(taskId uint, report string) {
 }
 func (logger *ConsoleLogger) LogEvent(report string) {
 
-	fmt.Printf("Time: ", time.Now(), "Info: ", report)
+	fmt.Println("Time: ", time.Now(), "Info: ", report)
 }
 
 func NewDatabaseLogger(storage storage.Storage) *DatabaseLogger {
