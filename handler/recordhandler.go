@@ -17,7 +17,11 @@ import (
 
 type RecordHandler struct {
 	//Points to parent handler.Handler task storage
+	//Created automatically when creating new handler
 	TaskStorage *taskstorage.TaskStorage
+
+	//Points to data storage
+	//Created automatically when creating new handler
 	DataStorage *storage.Storage
 }
 
@@ -38,6 +42,7 @@ func (recHandler *RecordHandler) GetCustomQueryResult(w http.ResponseWriter, r *
 	defer recHandler.DataStorage.Close()
 }
 
+// Uploads records from csv to database
 func (recHandler *RecordHandler) UploadRecords(w http.ResponseWriter, r *http.Request) {
 	taskId := recHandler.TaskStorage.TaskRun(recHandler.uploadRecords, *r)
 	json.NewEncoder(w).Encode(fmt.Sprintf("Task id is %d", taskId))
@@ -48,25 +53,29 @@ func (recHandler *RecordHandler) uploadRecords(taskId uint, r http.Request) {
 	var request request.RequestUploadContacts
 	taskStat := recHandler.TaskStorage.TaskGetStatistics(taskId)
 	if err := json.Unmarshal(reqBody, &request); err != nil {
-		taskStat.Errors = append(taskStat.Errors, err)
+		taskStat.Errors = append(taskStat.Errors, err.Error())
 		return
 	}
 	records, err := recHandler.readRecordsFromUrl(request.Url, request.ClientId)
 	if err != nil {
-		taskStat.Errors = append(taskStat.Errors, err)
+		taskStat.Errors = append(taskStat.Errors, err.Error())
 		return
 	}
 	recHandler.TaskStorage.TaskSetStatistics(taskId, recHandler.uploadRecordsToDB(records))
-	recHandler.TaskStorage.TaskStop(taskId)
 }
+
+// Get records from database through parameters
 func (recHandler *RecordHandler) GetRecords(w http.ResponseWriter, r *http.Request) {
 	err := recHandler.DataStorage.Open()
 	if err != nil {
+		json.NewEncoder(w).Encode(err)
 		return
 	}
 	reqBody, _ := io.ReadAll(r.Body)
 	var request request.RequestGetContacts
 	var result []model.Record
+
+	//Constructing query
 	query := "SELECT * FROM records WHERE 1=1 "
 
 	if err := json.Unmarshal(reqBody, &request); err != nil {
@@ -83,13 +92,12 @@ func (recHandler *RecordHandler) GetRecords(w http.ResponseWriter, r *http.Reque
 		query += fmt.Sprintf("AND name LIKE '%s' ", request.ContactName)
 	}
 
-	recHandler.DataStorage.Db.Raw(query).Scan(&result)
+	result = recHandler.DataStorage.Record().RawQuery(query)
 	json.NewEncoder(w).Encode(result)
 	defer recHandler.DataStorage.Close()
 }
 
-//region: Helping functions
-
+// region: Helping functions
 func (recHandler *RecordHandler) readRecordsFromUrl(url string, clientId string) ([]model.Record, error) {
 	var newRecords []model.Record
 
@@ -117,7 +125,7 @@ func (recHandler *RecordHandler) uploadRecordsToDB(newRecords []model.Record) ta
 	}
 	for i, value := range newRecords {
 		if value.Number == "" || value.ClientId == "" {
-			stats.Errors = append(stats.Errors, errors.New("Unrecognizable record in CSV. Record number: "+strconv.Itoa(i+1)))
+			stats.Errors = append(stats.Errors, errors.New("Unrecognizable record in CSV. Record number: "+strconv.Itoa(i+1)).Error())
 			continue
 		}
 
