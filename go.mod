@@ -8,6 +8,11 @@ require (
 )
 
 require (
+	github.com/golang/protobuf v1.5.2 // indirect
+	google.golang.org/protobuf v1.26.0 // indirect
+)
+
+require (
 	github.com/gorilla/mux v1.8.0
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/mattn/go-sqlite3 v1.14.0 // indirect

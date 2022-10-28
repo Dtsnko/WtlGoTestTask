@@ -1,0 +1,9 @@
+syntax="proto3";
+
+package model;
+
+
+message Log {
+    uint32 TaskId = 1;
+    string Information = 2;
+}

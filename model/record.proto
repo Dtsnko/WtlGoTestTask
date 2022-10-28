@@ -1,0 +1,14 @@
+syntax="proto3";
+
+package model;
+
+message Record {
+    string ClientId = 1;
+    string Number = 2;
+    string Name = 3;
+    bool Available = 4;
+}
+
+message Records {
+    repeated Record  Records = 1;
+}

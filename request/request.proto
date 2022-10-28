@@ -1,0 +1,15 @@
+syntax="proto3";
+
+
+package request;
+
+message RequestGetContacts{
+    string ContactNumber = 1;
+    string ContactName = 2;
+    string ClientId = 3;
+}
+
+message RequestUploadContacts {
+    string Url = 1;
+    string ClientId = 2;
+}
